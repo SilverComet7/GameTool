@@ -1,16 +1,19 @@
-# umi project
+# GameTool
+游戏通用管理后台
+
+
+react/umi/ant-desing-pro
 
 ## Getting Started
 
 Install dependencies,
 
 ```bash
-$ yarn
+$ yarn install
 ```
 
-Start the dev server,
+Start 
 
-```bash
-$ yarn start
 ```
-"# GameTool" 
+npm run start
+```
