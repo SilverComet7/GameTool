@@ -1,0 +1,24 @@
+
+@scrollWidth: 6px;
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  position: absolute;
+  width: @scrollWidth;
+  height: @scrollWidth;
+  background-color: rgba(245, 245, 245, 0.3);
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+}
+
+/*定义滑块 内阴影+圆角*/
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  position: relative;
+  display: block;
+  background-color: rgba(144, 147, 153, 0.3);
+  cursor: pointer;
+}
