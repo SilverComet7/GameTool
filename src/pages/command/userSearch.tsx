@@ -1,33 +1,35 @@
-import React, { useRef } from 'react';
-import { PlusOutlined,  } from '@ant-design/icons';
-import { Button, Tag, Space, Menu, Dropdown } from 'antd';
+import React, { useRef, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { Modal, Button, Input } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import { ProFormDigitRange, ProFormSelect } from '@ant-design/pro-form';
 import { commandRequest, request } from '@/api/base';
 
-export const RenderSeverList =  (props:any) => {
-
-return (<ProFormSelect
-  label='选择区服'
-  width='sm'
-  name='serverId'
-  fieldProps={{value:props.sid}}
-  request={
-    async () => {
-     const  result  =  await  request.get(`/proxy/${props.cid}/server`)
-     return result.data.map((item: any)=>({label:item.serverName,value:item.serverId}))
-    }
-  }
-/>)
-}
+export const RenderSeverList = (props: any) => {
+  return (
+    <ProFormSelect
+      label="选择区服"
+      width="sm"
+      name="serverId"
+      fieldProps={{ value: props.sid }}
+      request={async () => {
+        const result = await request.get(`/proxy/${props.cid}/server`);
+        return result.data.map((item: any) => ({
+          label: item.serverName,
+          value: item.serverId,
+        }));
+      }}
+    />
+  );
+};
 RenderSeverList.defaultProps = {
-  cid:18
-}
+  cid: 18,
+};
 export interface UserInfo {
   /** 服务器id */
 
-  serverId: number ;
+  serverId: number;
   /** 昵称 */
 
   nickName?: string;
@@ -43,50 +45,46 @@ export interface UserInfo {
   account?: string;
   /** 渠道号 */
 
-  channelId: string
+  channelId: string;
   /** 渠道自定义参数  或者sdk需要的参数 */
-  channelParam: { [key: string]: string | number }
+  channelParam: { [key: string]: string | number };
 
-  createTime: number ;
+  createTime: number;
   /** 上次登录时间 */
 
-  lastLoginTime: number ;
+  lastLoginTime: number;
   /** 离线时间 */
 
-  offlineTime: number ;
+  offlineTime: number;
 
-  nickChangeTimes: number ;
+  nickChangeTimes: number;
   /** 等级变更时间点，排行榜需要 */
 
-  levelChangeTme: number ;
+  levelChangeTme: number;
   /** vip等级版本号，如果版本号不相同，根据VIP总经验，校准当前等级和经验 */
 
   vipLevelVersion?: string;
   /** [公告编号]  */
-  bulletinVersions: { [id: string]: string }
+  bulletinVersions: { [id: string]: string };
   // 账号信息， 包括系统、IP、包名等，可扩展
   extInfo: Map<string, string>;
   /** 上次离开公会时间 */
 
-  lastLeaveGuildTime: number ;
+  lastLeaveGuildTime: number;
   /** 离开公会次数 */
 
-  leaveGuildCount: number ;
+  leaveGuildCount: number;
   /** 转会次数 */
 
-  transferCount: number ;
+  transferCount: number;
   // 被封禁到什么时候
 
-  forbiddenUntil: number ;
+  forbiddenUntil: number;
 
   _id: string;
 }
 
-
-
-
-
-const getColumns = (props:any)=>{
+const getColumns = (props: any) => {
   const columns: ProColumns<UserInfo>[] = [
     {
       dataIndex: 'index',
@@ -95,26 +93,26 @@ const getColumns = (props:any)=>{
     },
     {
       dataIndex: 'serverId',
-      hideInTable:true,
+      hideInTable: true,
       initialValue: 1,
-      renderFormItem: (_, { type, defaultRender,   ...rest }, form) => {
-        return  <RenderSeverList    />
+      renderFormItem: (_, { type, defaultRender, ...rest }, form) => {
+        return <RenderSeverList />;
       },
     },
     {
       title: '用户查询',
-      dataIndex:'account',
-      hideInTable:true,
+      dataIndex: 'account',
+      hideInTable: true,
     },
     {
       title: '账户名称',
-      dataIndex:'account',
-      hideInSearch:true,
+      dataIndex: 'account',
+      hideInSearch: true,
     },
     {
       title: '用户Id',
       dataIndex: 'userId',
-      search:false,
+      search: false,
       copyable: true,
       ellipsis: true,
       tip: '标题过长会自动收缩',
@@ -130,10 +128,9 @@ const getColumns = (props:any)=>{
           };
         },
       },
-      renderFormItem:()=><ProFormDigitRange
-      separator="-"
-      separatorWidth={60}
-      />
+      renderFormItem: () => (
+        <ProFormDigitRange separator="-" separatorWidth={60} />
+      ),
     },
     {
       title: 'vip等级',
@@ -146,37 +143,46 @@ const getColumns = (props:any)=>{
           };
         },
       },
-      renderFormItem:()=><ProFormDigitRange
-      separator="-"
-      separatorWidth={60}
-      />
+      renderFormItem: () => (
+        <ProFormDigitRange separator="-" separatorWidth={60} />
+      ),
     },
     {
       title: '操作',
       valueType: 'option',
-      render: (text, record, _, action) => [
-        <a
-          key="editable"
-        >
-          编辑
-        </a>,
-        <a onClick={()=> props.myEvent({user:record, keyName:'Command'})} >
-          查看
-        </a>,
-        <TableDropdown
-          key="actionGroup"
-          onSelect={() => action?.reload()}
-          menus={[
-            { key: 'copy', name: '复制' },
-            { key: 'delete', name: '删除' },
-          ]}
-        />,
-      ],
+      render: (text, record, _, action) => {
+        const [visible, setVisible] = useState(true);
+        const [account, setAccount] = useState('')
+        const setOk = async () => {
+          setVisible(true);
+        };
+        <Modal title="Modal" visible={visible} okText="确认">
+          <Input  value={account} onChange={(e)=>setAccount(e.target.value)} />
+        </Modal>;
+
+        return ([
+          <a
+            onClick={() => props.myEvent({ user: record, keyName: 'Command' })}
+          >
+            查看
+          </a>,
+          <TableDropdown
+            key="actionGroup"
+            onSelect={(key) => {
+              // if (key === 'copy') setOk();
+              console.log(text, record, _, action);
+            }}
+            menus={[
+              { key: 'copy', name: '复制' },
+              { key: 'delete', name: '删除' },
+            ]}
+          />,
+        ])
+      },
     },
   ];
-  return columns
-}
-
+  return columns;
+};
 
 export default (props: any) => {
   const actionRef = useRef<ActionType>();
@@ -186,20 +192,21 @@ export default (props: any) => {
       actionRef={actionRef}
       request={async (params = {}, sort, filter) => {
         // console.log(params,sort, filter);
-        const {  current: page, serverId, ...rest } = params
-        const result = await commandRequest('/gm/command/common/18',{  model: 'accountManager',
-        action: 'queryMany',
-        serverIds:[serverId],
-        data:{
-          searchNickname:true,
-          page,
-          ...rest
-        }
+        const { current: page, serverId, ...rest } = params;
+        const result = await commandRequest('/gm/command/common/18', {
+          model: 'accountManager',
+          action: 'queryMany',
+          serverIds: [serverId],
+          data: {
+            searchNickname: true,
+            page,
+            ...rest,
+          },
         });
         return {
-          data:result.data.items,
-          total:result.data.count,
-        }
+          data: result.data.items,
+          total: result.data.count,
+        };
       }}
       editable={{
         type: 'multiple',
@@ -211,7 +218,7 @@ export default (props: any) => {
       rowKey="id"
       search={{
         labelWidth: 'auto',
-        defaultCollapsed:false
+        defaultCollapsed: false,
       }}
       form={{
         // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下

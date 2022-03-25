@@ -39,7 +39,7 @@ export const gmCmdSelection: any[] = [
         label: '设置关卡',
         action: 'setCheckpoint',
         render() {
-          return <ProFormDigit width="sm" fieldProps={{ onChange: (e) => { this.sendData.durability = e } }} label="次数设置" />
+          // return <ProFormDigit width="sm" fieldProps={{ onChange: (e) => { this.sendData.durability = e } }} label="次数设置" />
         }
       },
     ],
@@ -123,8 +123,7 @@ export default (props) => {
 
   let initPropValue = {}
   const changeCmpValue = (e, se: any) => {
-    //  setCmpName(se[se.length-1]?.render?.())
-    setCmpName(e[e.length - 1])
+   if(e?.length) setCmpName(e[e.length - 1])
   }
   const getCmp = useMemo(() => {
     return gmCmdSelection.map(e => e.children).flat().find(item => item.value === cmpName)
@@ -148,7 +147,6 @@ export default (props) => {
         await waitTime(2000);
         const { action, model, sendData } = getCmp
         const { uid, serverId } = values;
-        // console.log(values, getCmp);
         const result = await commandRequest(undefined, {
           model,
           action,
@@ -171,7 +169,7 @@ export default (props) => {
       <RenderSeverList name='serverId'></RenderSeverList>
       <ProFormCascader
         width="sm"
-        fieldProps={{ options: gmCmdSelection, onChange: changeCmpValue }}
+        fieldProps={{ options: gmCmdSelection, onChange: changeCmpValue,expandTrigger:'hover', }}
         label="操作"
       />
       {getCmp?.render ? getCmp?.render() : <></>}
